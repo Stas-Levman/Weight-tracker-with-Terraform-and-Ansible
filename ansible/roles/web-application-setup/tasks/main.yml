@@ -1,0 +1,67 @@
+
+   - name: add nodejs apt key
+     apt_key:
+       url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+       state: present
+
+
+   - name: add nodejs 14.x repository
+     apt_repository:
+       repo: deb https://deb.nodesource.com/node_14.x {{ ansible_lsb.codename }} main
+       state: present
+       update_cache: yes
+
+
+   - name: install nodejs 14.x
+     apt:
+       name: nodejs
+       state: present
+
+
+   - name: Clone weight tracker app repo
+     git:
+       repo: https://github.com/sincros121/bootcamp-app.git
+       dest: /bootcamp-app
+       clone: yes
+       update: yes
+
+   - name: NPM instll
+     community.general.npm:
+        path: /bootcamp-app
+
+
+   - name: Install latest PM2
+     shell: sudo npm install pm2@latest -g
+     args:
+        chdir: /bootcamp-app
+        executable: /bin/bash
+
+   - name: Initialize PM2 startup
+     shell: |
+        sudo pm2 startup
+        sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
+     args:
+        chdir: /bootcamp-app
+        executable: /bin/bash
+
+
+   - name: Run Okta API call and .env creation script on hosts
+     script: OKTA-API-and-ENV-{{ env }}.sh
+     args:
+        chdir: /bootcamp-app
+
+
+   - name: Initialize database
+     shell: npm run initdb
+     args:
+        chdir: /bootcamp-app
+        executable: /bin/bash
+
+
+   - name: Start the web application using pm2 and save the process
+     shell: |
+        sudo pm2 start npm -- run dev
+        sudo pm2 save
+     args:
+        chdir: /bootcamp-app
+        executable: /bin/bash

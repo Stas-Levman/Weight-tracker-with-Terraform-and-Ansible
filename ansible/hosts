@@ -1,8 +1,0 @@
-[staging]
-localhost
-
-[webservers:children]
-staging
-
-[webservers:vars]
-ansible_python_interpreter=/usr/bin/python3

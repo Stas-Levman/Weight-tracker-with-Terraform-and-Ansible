@@ -1,18 +1,15 @@
 ---
-- hosts: localhost
-  connection: local
-  include_vars:
-    file: vars/main.yml
-
-  tasks:
+#- hosts: localhost
+#  connection: local
+#  tasks:
    - name: Get facts for all Public IPs within resource groups
      azure.azcollection.azure_rm_publicipaddress_info:
-       resource_group: weight-tracker-stage-rg
+       resource_group: "{{ resource_group_name }}"
      register: output_ip_address
 
    - name: Get loadbalancer info
      azure.azcollection.azure_rm_loadbalancer_info:
-       resource_group: weight-tracker-stage-rg
+       resource_group: "{{ resource_group_name }}"
        name: front-load-balancer
      register: output
 

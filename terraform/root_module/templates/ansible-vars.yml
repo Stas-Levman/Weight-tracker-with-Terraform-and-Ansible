@@ -1,2 +1,2 @@
 ---
-resource-group-name: ${}
+resource-group-name: ${resource-group-name}

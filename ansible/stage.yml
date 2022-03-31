@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+
+  roles:
+    - role: get-vmss-inventory
+      vars:
+        resource_group_name: "weight-tracker-stage-rg"
+
+
+- hosts: scalesethosts
+  become: true
+
+  roles:
+    - role: web-application-setup
+      vars:
+        env: stage

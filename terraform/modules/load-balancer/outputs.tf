@@ -23,10 +23,4 @@ output "lb-name" {
   value = azurerm_lb.front-load-balancer.name
 }
 
-output "backe" {
-  value = ""
-}
 
-output "frontend-ip-confguration-inbound-nat-rules" {
-  value = azurerm_lb.front-load-balancer.frontend_ip_configuration[*].inbound_nat_rules
-}

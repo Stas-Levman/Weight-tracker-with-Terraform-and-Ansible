@@ -93,7 +93,7 @@ resource "azurerm_public_ip" "load-balancer-public-ip" {
 # create the .env file, and update the URIs in okta via API.
 #---------------------------------------------------------------------------------------------------------
 data "template_file" "ansible-shell-script" {
-  template = file("${path.module}/templates/VM-startup-script-template.txt")
+  template = file("${path.module}/templates/Okta-API-call-and-Env-creation.txt")
 
   vars = {
     okta-API-token     = var.is-azure-vault-enabled ? module.azure-vault[0].okta-API-token : var.okta-API-token
@@ -107,24 +107,12 @@ data "template_file" "ansible-shell-script" {
   }
 }
 
-#data "template_file" "ansible-vars" {
-#  template = file("${path.module}/template/ansible-vars.yml")
-#
-#  vars = {
-#    resource-group-name = azurerm_resource_group.resource-group.name
-#  }
-#}
 
 resource "local_file" "create-script" {
   filename = "../../ansible/roles/web-application-setup/files/OKTA-API-and-ENV-${terraform.workspace}.sh"
   content = data.template_file.ansible-shell-script.rendered
 }
 
-
-#resource "local_file" "create-ansible-vars" {
-#  filename = "../../ansible/roles/get-vmss-inventory/vars/OKTA-API-and-ENV.sh"
-#  content = data.template_file.ansible-vars
-#}
 
 #--------------------------------------------------------------------------------------------------------------
 # Creates the public load balancer that will be used to access the application on the virtual machine scale set,
@@ -178,32 +166,3 @@ module "weight-tracker-postgresql-db" {
   depends_on = [module.subnets]
 
 }
-
-
-
-
-
-#
-#data "azurerm_virtual_machine_scale_set" "vmss-data" {
-#  name                = module.web-application-vmss.vmss-name
-#  resource_group_name = local.rg-name
-#}
-#
-#
-#
-#data "azurerm_lb" "lb-data" {
-#  name                = module.front-load-balancer.lb-name
-#  resource_group_name = local.rg-name
-#}
-#
-#data "azurerm_lb_backend_address_pool" "lb-backend" {
-#  loadbalancer_id = module.front-load-balancer.lb-id
-#  name            = module.front-load-balancer.lb-pool-name
-#}
-#
-#
-#
-##data "azurerm_network_interface" "vmss-nic" {
-##  name                = ""
-##  resource_group_name = ""
-##}

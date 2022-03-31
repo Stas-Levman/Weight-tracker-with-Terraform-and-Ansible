@@ -1,0 +1,31 @@
+---
+- name: Get Key Vault by name
+  azure_rm_keyvault_info:
+    resource_group: "{{ resource_gruop }}"
+    name: "{{ secret_name }}"
+  register: keyvaul
+
+
+#- name: Set key vault URI fact
+#   set_fact: keyvaulturi="{{ keyvault["keyvaults"][0]["vault_uri"] }}"
+
+
+- name: Get secret value
+  azure_rm_keyvaultsecret_info:
+    vault_uri: keyvault["keyvaults"][0]["vault_uri"]
+    name: "{{ secret_name }}"
+  register: kvSecre
+
+
+- name: set secret fact
+  set_fact: secretValue="{{ kvSecret['secrets'][0]['secret'] }}
+
+
+- name: Output key vault secret
+  debug:
+    msg="{{ secretValue }}"
+
+
+
+
+    # "{{ keyvaulturi }}"

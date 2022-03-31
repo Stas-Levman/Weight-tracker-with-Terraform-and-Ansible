@@ -1,7 +1,4 @@
 ---
-#- hosts: localhost
-#  connection: local
-#  tasks:
    - name: Get facts for all Public IPs within resource groups
      azure.azcollection.azure_rm_publicipaddress_info:
        resource_group: "{{ resource_group_name }}"
@@ -13,6 +10,10 @@
        name: front-load-balancer
      register: output
 
+   - name: Get VM password
+     azure.azcollection.azure_rm_keyvaultsecret:
+
+
    - name: Add all VMSS hosts
      add_host:
        groups: scalesethosts
@@ -21,7 +22,7 @@
        ansible_port: "{{ item.properties.frontendPort }}"
        ansible_ssh_user: "ubuntu"
        # "{{ admin_username }}"
-       ansible_ssh_pass: "TzkQJTCQ8LtL2wLU"
+       ansible_ssh_pass: ""
        # "{{ admin_password }}"
        vars: ansible_ssh_common_args='-o StrictHostKeyChecking=no'
      with_items:

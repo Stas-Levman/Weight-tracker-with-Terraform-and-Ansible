@@ -92,25 +92,38 @@ resource "azurerm_public_ip" "load-balancer-public-ip" {
 # the custom data shell script that will be used to configure the virtual machines in the scale set,
 # create the .env file, and update the URIs in okta via API.
 #---------------------------------------------------------------------------------------------------------
-data "template_file" "ansible-shell-script" {
-  template = file("${path.module}/templates/Okta-API-call-and-Env-creation.txt")
+data "template_file" "env-creation-shell-script" {
+  template = file("${path.module}/templates/Okta-API-call.txt")
 
   vars = {
-    okta-API-token     = var.is-azure-vault-enabled ? module.azure-vault[0].okta-API-token : var.okta-API-token
     PGHOST             = module.weight-tracker-postgresql-db.psql-fqdn
     PGPASSWORD         = var.is-azure-vault-enabled ? module.azure-vault[0].weight-tracker-PSQL-password : var.PGPASSWORD
     HOST_URL_IP        = local.lb-public-ip-address
     COOKIE_ENCRYPT_PWD = var.is-azure-vault-enabled ? module.azure-vault[0].cookie-encrypt-pwd : var.COOKIE_ENCRYPT_PWD
     OKTA-client-ID     = var.OKTA-client-ID
-    OKTA-client-name   = var.OKTA-client-name
     OKTA_CLIENT_SECRET = var.is-azure-vault-enabled ? module.azure-vault[0].okta-client-secret : var.OKTA_CLIENT_SECRET
   }
 }
 
+data "template_file" "api-call-shell-script" {
+  template = file("${path.module}/templates/env-creation.txt")
 
-resource "local_file" "create-script" {
-  filename = "../../ansible/roles/web-application-setup/files/OKTA-API-and-ENV-${terraform.workspace}.sh"
-  content = data.template_file.ansible-shell-script.rendered
+  vars = {
+    okta-API-token     = var.is-azure-vault-enabled ? module.azure-vault[0].okta-API-token : var.okta-API-token
+    HOST_URL_IP        = local.lb-public-ip-address
+    OKTA-client-ID     = var.OKTA-client-ID
+    OKTA-client-name   = var.OKTA-client-name
+  }
+}
+
+resource "local_file" "create-API-call-script" {
+  filename = "../../ansible/roles/web-application-setup/files/OKTA-API-call-${terraform.workspace}.sh"
+  content  = data.template_file.api-call-shell-script.rendered
+}
+
+resource "local_file" "create-ENV-creation-script" {
+  filename = "../../ansible/roles/web-application-setup/files/ENV-creation${terraform.workspace}.sh"
+  content  = data.template_file.env-creation-shell-script.rendered
 }
 
 
@@ -145,8 +158,8 @@ module "web-application-vmss" {
   backend-address-pool-ids = [module.front-load-balancer.backend-pool.id]
   nat-rule-ids             = [module.front-load-balancer.inbound-nat-rule-id]
   public-subnet-id         = module.subnets.public-subnet-id
-#  VM-custom-data           = base64encode(data.template_file.custom-data-shell-script.rendered)
-  vmss-maximum-instances   = var.vmss-maximum-instances
+  #  VM-custom-data           = base64encode(data.template_file.custom-data-shell-script.rendered)
+  vmss-maximum-instances = var.vmss-maximum-instances
 
   depends_on = [module.front-load-balancer, module.weight-tracker-postgresql-db]
 }

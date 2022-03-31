@@ -1,0 +1,124 @@
+---
+- hosts: localhost
+  connection: local
+
+  tasks:
+   - name: Get facts for all Public IPs within resource groups
+     azure.azcollection.azure_rm_publicipaddress_info:
+       resource_group: weight-tracker-stage-rg
+     register: output_ip_address
+
+   - name: Get loadbalancer info
+     azure.azcollection.azure_rm_loadbalancer_info:
+       resource_group: weight-tracker-stage-rg
+       name: front-load-balancer
+     register: output
+
+   - name: Add all VMSS hosts
+     add_host:
+       groups: scalesethosts
+       hostname: "{{ output_ip_address.publicipaddresses[0].ip_address }}_{{ item.properties.frontendPort }}"
+       ansible_host: "{{ output_ip_address.publicipaddresses[0].ip_address }}"
+       ansible_port: "{{ item.properties.frontendPort }}"
+       ansible_ssh_user: "ubuntu"
+       # "{{ admin_username }}"
+       ansible_ssh_pass: "TzkQJTCQ8LtL2wLU"
+       # "{{ admin_password }}"
+       vars: ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+     with_items:
+       - "{{ output.loadbalancers[0].properties.inboundNatRules }}"
+     register: group_debug
+
+
+- hosts: scalesethosts
+  remote_user: ubuntu
+  become: true
+  tasks:
+
+
+   - name: add nodejs apt key
+     apt_key:
+       url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+       state: present
+   - name: add nodejs 14.x repository
+     apt_repository:
+       repo: deb https://deb.nodesource.com/node_14.x {{ ansible_lsb.codename }} main
+       state: present
+       update_cache: yes
+   - name: install nodejs 14.x
+     apt:
+       name: nodejs
+       state: present
+
+
+   - name: Clone weight tracker app repo
+     git:
+       repo: https://github.com/sincros121/bootcamp-app.git
+       dest: /bootcamp-app
+       clone: yes
+       update: yes
+
+   - name: NPM instll
+     community.general.npm:
+        path: /bootcamp-app
+
+
+
+   - name: Install latest PM2
+     shell: sudo npm install pm2@latest -g
+     args:
+        chdir: /bootcamp-app
+        executable: /bin/bash
+
+   - name: Initialize PM2 startup
+     shell: |
+        sudo pm2 startup
+        sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
+     args:
+        chdir: /bootcamp-app
+        executable: /bin/bash
+
+
+   - name: Run Okta API call and .env creation script
+     script: script/OKTA-API-and-ENV.sh
+     args:
+        chdir: /bootcamp-app
+
+   - name: Initialize database
+     shell: npm run initdb
+     args:
+        chdir: /bootcamp-app
+        executable: /bin/bash
+
+   - name: Start the web application using pm2 and save the process
+     shell: |
+        sudo pm2 start npm -- run dev
+        sudo pm2 save
+     args:
+        chdir: /bootcamp-app
+        executable: /bin/bash
+
+
+
+
+
+
+
+
+
+
+
+#
+#
+#
+#    - name: create file
+#         become: yes
+#         template:
+#             src: ansible-hosts.j2
+#             dest: "{{ wm_inventory_file }}"
+
+
+#    - name: Ensure group "scalesethosts" exists
+#      ansible.builtin.group:
+#         name: scalesethosts
+#         state: present

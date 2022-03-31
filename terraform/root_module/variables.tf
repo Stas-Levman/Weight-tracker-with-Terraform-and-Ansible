@@ -19,49 +19,67 @@ variable "is-azure-vault-enabled" {
 }
 
 variable "azure-vault-name" {
-  type    = string
-  default = "staslevman-vault"
+  type        = string
+  default     = "staslevman-vault"
   description = "The vault name to use for this project if enabled"
 }
 
 variable "azure-vault-rg-name" {
-  type    = string
-  default = "Vault-rg"
+  type        = string
+  default     = "Vault-rg"
   description = "The vault resource group name to use for this project if enabled"
 }
 
-variable "okta-API-token" {
-  default = null
+variable "resource-group-name" {
   type = string
+  default = null
+  description = "The name of the resource group created"
+}
+
+variable "okta-API-token" {
+  default     = null
+  type        = string
   description = "Variable of sensitive data that will be used with a custom .tfvars file instead of relying on vault"
 }
 
 variable "PGPASSWORD" {
-  default = null
-  type = string
+  default     = null
+  type        = string
   description = "Variable of sensitive data that will be used with a custom .tfvars file instead of relying on vault"
 }
 
 variable "COOKIE_ENCRYPT_PWD" {
-  default = null
-  type = string
+  default     = null
+  type        = string
   description = "Variable of sensitive data that will be used with a custom .tfvars file instead of relying on vault"
+}
+
+variable "OKTA-client-ID" {
+  default     = null
+  type        = string
+  description = "The target OKTA client ID to update with an API call"
+}
+
+variable "OKTA-client-name" {
+  default     = null
+  type        = string
+  description = "The target OKTA client name to update with an API call"
 }
 
 variable "OKTA_CLIENT_SECRET" {
-  default = null
-  type = string
-  description = "Variable of sensitive data that will be used with a custom .tfvars file instead of relying on vault"
+  default     = null
+  type        = string
+  description = "Variable of sensitive data Fthat will be used with a custom .tfvars file instead of relying on vault"
 }
 
 variable "admin-password" {
-  default = null
-  type = string
+  default     = null
+  type        = string
   description = "Variable of sensitive data that will be used with a custom .tfvars file instead of relying on vault"
 }
 
 variable "postgresql-db-password" {
-  default = null
-  type = string
+  default     = null
+  type        = string
   description = "Variable of sensitive data that will be used with a custom .tfvars file instead of relying on vault"
 }

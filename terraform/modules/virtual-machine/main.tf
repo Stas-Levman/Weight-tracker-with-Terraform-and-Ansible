@@ -1,17 +1,34 @@
 
+
+
+
+resource "azurerm_public_ip" "VM-public-ip-address" {
+  allocation_method   = "Static"
+  location            = var.location
+  name                = "public-VM-ip-00${count.index + 1}"
+  resource_group_name = var.rg-name
+}
+
+
+
+
 #------------------------------
 # Creating VM network interface
 #------------------------------
 resource "azurerm_network_interface" "VM-NIC" {
   location            = var.location
-  name                = "VM-NIC-name-00${count.index}"
+  name                = "VM-NIC-name-00${count.index + 1}"
   resource_group_name = var.rg-name
   ip_configuration {
-    name                          = "VM-NIC-ip-config-00${count.index}"
+    public_ip_address_id = azurerm_public_ip.VM-public-ip-address.id
+    name                          = "VM-NIC-ip-config-00${count.index + 1}"
     subnet_id                     = var.public-subnet-id
     private_ip_address_allocation = "Dynamic"
   }
 }
+
+
+
 
 #-------------------------------
 # Creating linux virtual machine

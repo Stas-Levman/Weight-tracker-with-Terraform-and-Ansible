@@ -31,3 +31,11 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Ignore ansible related logs and scripts containing secrets
+*.log
+*.sh
+*.ssh
+
+#
+.idea

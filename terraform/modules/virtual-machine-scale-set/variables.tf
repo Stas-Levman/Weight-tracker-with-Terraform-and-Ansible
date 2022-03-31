@@ -18,10 +18,10 @@ variable "admin-password" {
   description = "The password used for the virtual machines"
 }
 
-variable "VM-custom-data" {
-  type        = string
-  description = "The custom data we are inserting in to the machine and running at provision stage, This data is responsible for configuring the virtual machine"
-}
+#variable "VM-custom-data" {
+#  type        = string
+#  description = "The custom data we are inserting in to the machine and running at provision stage, This data is responsible for configuring the virtual machine"
+#}
 
 variable "public-subnet-id" {
   type = string

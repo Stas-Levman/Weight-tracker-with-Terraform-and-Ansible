@@ -4,7 +4,7 @@
 # Creating private DNS zone in order to be able to reach the private postgreSQL database
 #---------------------------------------------------------------------------------------
 resource "azurerm_private_dns_zone" "weight-tracker-postgresql-db-private-dns-zone" {
-  name                = "weight-tracker-db.postgres.database.azure.com"
+  name                = "weight-tracker-db-${terraform.workspace}.postgres.database.azure.com"
   resource_group_name = var.rg-name
 }
 
@@ -22,7 +22,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgresql-dns-to-vnet
 # Creating the managed PostgreSQL database server, this database depends on the private DNS zone being created before it
 #-----------------------------------------------------------------------------------------------------------------------
 resource "azurerm_postgresql_flexible_server" "weight-tracker-postgresql-db" {
-  name                   = "weight-tracker-postgresql-db"
+  name                   = "weight-tracker-postgresql-db-${terraform.workspace}"
   resource_group_name    = var.rg-name
   location               = var.location
   delegated_subnet_id    = var.private-subnet-id

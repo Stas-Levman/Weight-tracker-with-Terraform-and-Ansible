@@ -19,7 +19,7 @@ locals {
 #-------------------------------------------------------------------------------------------------------
 module "azure-vault" {
   source = "../modules/azure-vault"
-  count = var.is-azure-vault-enabled ? 1 : 0
+  count  = var.is-azure-vault-enabled ? 1 : 0
 
 
   azure-vault-name           = var.azure-vault-name
@@ -30,7 +30,7 @@ module "azure-vault" {
 # Creates the resource group that will be used throughout the project
 #-----------------------------------------------------------------------------------------------------
 resource "azurerm_resource_group" "resource-group" {
-  name     = "weight-tracker-rg"
+  name     = var.resource-group-name
   location = "East US"
 }
 
@@ -92,8 +92,8 @@ resource "azurerm_public_ip" "load-balancer-public-ip" {
 # the custom data shell script that will be used to configure the virtual machines in the scale set,
 # create the .env file, and update the URIs in okta via API.
 #---------------------------------------------------------------------------------------------------------
-data "template_file" "custom-data-shell-script" {
-  template = file("${path.module}/VM-startup-script-template.sh")
+data "template_file" "ansible-shell-script" {
+  template = file("${path.module}/template/VM-startup-script-template.sh")
 
   vars = {
     okta-API-token     = var.is-azure-vault-enabled ? module.azure-vault[0].okta-API-token : var.okta-API-token
@@ -101,10 +101,13 @@ data "template_file" "custom-data-shell-script" {
     PGPASSWORD         = var.is-azure-vault-enabled ? module.azure-vault[0].weight-tracker-PSQL-password : var.PGPASSWORD
     HOST_URL_IP        = local.lb-public-ip-address
     COOKIE_ENCRYPT_PWD = var.is-azure-vault-enabled ? module.azure-vault[0].cookie-encrypt-pwd : var.COOKIE_ENCRYPT_PWD
+    OKTA-client-ID     = var.OKTA-client-ID
+    OKTA-client-name   = var.OKTA-client-name
     OKTA_CLIENT_SECRET = var.is-azure-vault-enabled ? module.azure-vault[0].okta-client-secret : var.OKTA_CLIENT_SECRET
   }
-
 }
+
+data "template_file" "ansible-vars" {}
 
 #--------------------------------------------------------------------------------------------------------------
 # Creates the public load balancer that will be used to access the application on the virtual machine scale set,
@@ -137,7 +140,7 @@ module "web-application-vmss" {
   backend-address-pool-ids = [module.front-load-balancer.backend-pool.id]
   nat-rule-ids             = [module.front-load-balancer.inbound-nat-rule-id]
   public-subnet-id         = module.subnets.public-subnet-id
-  VM-custom-data           = base64encode(data.template_file.custom-data-shell-script.rendered)
+#  VM-custom-data           = base64encode(data.template_file.custom-data-shell-script.rendered)
   vmss-maximum-instances   = var.vmss-maximum-instances
 
   depends_on = [module.front-load-balancer, module.weight-tracker-postgresql-db]
@@ -159,20 +162,34 @@ module "weight-tracker-postgresql-db" {
 
 }
 
+resource "local_file" "create-script" {
+  filename = "../../ansible/script/OKTA-API-and-ENV.sh"
+  content = data.template_file.ansible-shell-script.rendered
+}
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#
+#data "azurerm_virtual_machine_scale_set" "vmss-data" {
+#  name                = module.web-application-vmss.vmss-name
+#  resource_group_name = local.rg-name
+#}
+#
+#
+#
+#data "azurerm_lb" "lb-data" {
+#  name                = module.front-load-balancer.lb-name
+#  resource_group_name = local.rg-name
+#}
+#
+#data "azurerm_lb_backend_address_pool" "lb-backend" {
+#  loadbalancer_id = module.front-load-balancer.lb-id
+#  name            = module.front-load-balancer.lb-pool-name
+#}
+#
+#
+#
+##data "azurerm_network_interface" "vmss-nic" {
+##  name                = ""
+##  resource_group_name = ""
+##}

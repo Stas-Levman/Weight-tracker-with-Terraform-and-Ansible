@@ -4,11 +4,11 @@ locals {
   key-vault-id = data.azurerm_key_vault.azure-vault.id
 
   azure-vault-secrets = tomap({
-    VM-password                 = "VM-password"
-    cookie-encrypt-pwd          = "cookie-encrypt-pwd"
-    okta-client-secret          = "okta-client-secret"
-    weight-tacker-PSQL-password = "weight-tacker-PSQL-password"
-    OKTA-api-token              = "OKTA-api-token"
+    VM-password                  = "VM-password"
+    cookie-encrypt-pwd           = "cookie-encrypt-pwd"
+    okta-client-secret           = "okta-client-secret"
+    weight-tracker-PSQL-password = "weight-tracker-PSQL-db-password"
+    OKTA-api-token               = "OKTA-api-token"
     }
   )
 }
@@ -37,9 +37,9 @@ data "azurerm_key_vault_secret" "okta-client-secret" {
   name         = local.azure-vault-secrets["okta-client-secret"]
 }
 
-data "azurerm_key_vault_secret" "weight-tacker-PSQL-password" {
+data "azurerm_key_vault_secret" "weight-tracker-PSQL-password" {
   key_vault_id = local.key-vault-id
-  name         = local.azure-vault-secrets["weight-tacker-PSQL-password"]
+  name         = local.azure-vault-secrets["weight-tracker-PSQL-password"]
 }
 
 data "azurerm_key_vault_secret" "okta-API-token" {

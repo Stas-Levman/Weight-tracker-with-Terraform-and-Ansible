@@ -8,12 +8,12 @@ resource "azurerm_linux_virtual_machine_scale_set" "web-application-VM-scale-set
   name                            = "web-application-VM-scale-set"
   resource_group_name             = var.rg-name
   location                        = var.location
-  sku                             = "Standard_B1s"
+  sku                             = terraform.workspace == "stage" ? "Standard_B1s" : "Standard_B2s"
   instances                       = 3
   admin_username                  = "ubuntu"
   admin_password                  = var.admin-password
   disable_password_authentication = false
-  custom_data                     = var.VM-custom-data
+#  custom_data                     = var.VM-custom-data
 
 
   source_image_reference {
@@ -106,3 +106,4 @@ resource "azurerm_monitor_autoscale_setting" "vmss-auto-scaling-setting" {
     }
   }
 }
+

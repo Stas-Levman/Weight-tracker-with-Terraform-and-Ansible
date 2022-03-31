@@ -13,7 +13,6 @@ resource "azurerm_lb" "front-load-balancer" {
   frontend_ip_configuration {
     name                 = "frontend-IP-configuration"
     public_ip_address_id = var.public-ip-id
-
   }
 }
 
@@ -84,5 +83,4 @@ resource "azurerm_lb_nat_pool" "lb-nat-pool" {
   backend_port                   = 22
   frontend_ip_configuration_name = "frontend-IP-configuration"
 }
-
 

@@ -45,10 +45,15 @@
         executable: /bin/bash
 
 
-   - name: Run Okta API call and .env creation script on hosts
-     script: OKTA-API-and-ENV-{{ env }}.sh
+   - name: Run Okta API call
+     script: OKTA-API-call-{{ env }}.sh
      args:
         chdir: /bootcamp-app
+
+   - name: Run .env creation script on hosts
+     script: ENV-creation-{{ env }}.sh
+     args:
+       chdir: /bootcamp-app
 
 
    - name: Initialize database

@@ -40,3 +40,4 @@ terraform.rc
 #
 .idea
 venv
+/ansible/roles/get-vault-secrets/

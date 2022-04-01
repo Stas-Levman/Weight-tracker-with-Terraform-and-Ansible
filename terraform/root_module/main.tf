@@ -93,7 +93,7 @@ resource "azurerm_public_ip" "load-balancer-public-ip" {
 # create the .env file, and update the URIs in okta via API.
 #---------------------------------------------------------------------------------------------------------
 data "template_file" "env-creation-shell-script" {
-  template = file("${path.module}/templates/Okta-API-call.txt")
+  template = file("${path.module}/templates/env-creation.txt")
 
   vars = {
     PGHOST             = module.weight-tracker-postgresql-db.psql-fqdn
@@ -106,7 +106,7 @@ data "template_file" "env-creation-shell-script" {
 }
 
 data "template_file" "api-call-shell-script" {
-  template = file("${path.module}/templates/env-creation.txt")
+  template = file("${path.module}/templates/Okta-API-call.txt")
 
   vars = {
     okta-API-token     = var.is-azure-vault-enabled ? module.azure-vault[0].okta-API-token : var.okta-API-token
@@ -122,7 +122,7 @@ resource "local_file" "create-API-call-script" {
 }
 
 resource "local_file" "create-ENV-creation-script" {
-  filename = "../../ansible/roles/web-application-setup/files/ENV-creation${terraform.workspace}.sh"
+  filename = "../../ansible/roles/web-application-setup/files/ENV-creation-${terraform.workspace}.sh"
   content  = data.template_file.env-creation-shell-script.rendered
 }
 

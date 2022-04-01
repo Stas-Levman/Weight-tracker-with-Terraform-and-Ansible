@@ -10,8 +10,16 @@
        name: front-load-balancer
      register: output
 
-   - name: Get VM password
-     azure.azcollection.azure_rm_keyvaultsecret:
+#   - name: Get Key Vault by name
+#     azure_rm_keyvault_info:
+#       resource_group: Vault-rg
+#       name: staslevman-vault
+#     register: keyvaul
+#
+#   - name: Get VM password
+#     azure.azcollection.azure_rm_keyvaultsecret_info:
+#       vault_uri: keyvaul.keyvaults[0].vault_uri
+#       name: VM-password
 
 
    - name: Add all VMSS hosts
@@ -21,10 +29,6 @@
        ansible_host: "{{ output_ip_address.publicipaddresses[0].ip_address }}"
        ansible_port: "{{ item.properties.frontendPort }}"
        ansible_ssh_user: "ubuntu"
-       # "{{ admin_username }}"
-       ansible_ssh_pass: ""
-       # "{{ admin_password }}"
-       vars: ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+       ansible_ssh_pass: "{{ admin_password }}"
      with_items:
        - "{{ output.loadbalancers[0].properties.inboundNatRules }}"
-     register: group_debug

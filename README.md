@@ -15,9 +15,9 @@ The terraform part of the project requires a custom .tfvars file with appropriat
 4. Change directory to root-module in that folder
 5. Run command "terraform init" to initialize the project and download all the necessary providers
 6. Create two workspaces named "stage" and "prod" using "terraform workspace new "NAME" comamnd.
-7. switch to either the stage or prod workspace and run the command "terraform plan -var-file "$(terraform workspace show).tfvars"" to create the selected environment infrastructure.
+7. switch to either the stage or prod workspace and run the command `terraform plan -var-file "$(terraform workspace show).tfvars"` to create the selected environment infrastructure.
 
 #### Ansible
 8. Change directory to the "Ansible" folder
-9. Run the command "ansible-playbook stage.yml --ask-vault-password" to configure the stage infrastructure.
-10. Run the command "ansible-playbook prod.yml --ask-vault-password" to configure the prod infrastructure.
+9. Run the command `ansible-playbook stage.yml --ask-vault-password` to configure the stage infrastructure.
+10. Run the command `ansible-playbook prod.yml --ask-vault-password` to configure the prod infrastructure.

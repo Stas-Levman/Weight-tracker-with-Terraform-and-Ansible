@@ -4,22 +4,13 @@
        resource_group: "{{ resource_group_name }}"
      register: output_ip_address
 
+
    - name: Get loadbalancer info
      azure.azcollection.azure_rm_loadbalancer_info:
        resource_group: "{{ resource_group_name }}"
        name: front-load-balancer
      register: output
 
-#   - name: Get Key Vault by name
-#     azure_rm_keyvault_info:
-#       resource_group: Vault-rg
-#       name: staslevman-vault
-#     register: keyvaul
-#
-#   - name: Get VM password
-#     azure.azcollection.azure_rm_keyvaultsecret_info:
-#       vault_uri: keyvaul.keyvaults[0].vault_uri
-#       name: VM-password
 
 
    - name: Add all VMSS hosts

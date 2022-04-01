@@ -1,29 +1,35 @@
 ---
 - name: Get Key Vault by name
   azure_rm_keyvault_info:
-    resource_group: "{{ resource_gruop }}"
-    name: "{{ secret_name }}"
+    resource_group: "{{ resource_group }}"
+    name: "{{ name }}"
   register: keyvaul
+
+- debug:
+    msg: "{{ keyvaul.keyvaults[0].vault_uri }}"
 
 
 #- name: Set key vault URI fact
-#   set_fact: keyvaulturi="{{ keyvault["keyvaults"][0]["vault_uri"] }}"
+#   set_fact: keyvaulturi="{{ keyvaul.keyvaults[0].vault_uri }}"
 
 
 - name: Get secret value
-  azure_rm_keyvaultsecret_info:
-    vault_uri: keyvault["keyvaults"][0]["vault_uri"]
-    name: "{{ secret_name }}"
+  azure.azcollection.azure_rm_keyvaultsecret_info:
+    vault_uri: "{{ keyvaul.keyvaults[0].vault_uri }}"
+    name: VM-password
   register: kvSecre
 
-
-- name: set secret fact
-  set_fact: secretValue="{{ kvSecret['secrets'][0]['secret'] }}
-
-
-- name: Output key vault secret
-  debug:
-    msg="{{ secretValue }}"
+- debug:
+    msg: kvSecre
+#
+#
+#- name: set secret fact
+#  set_fact: secretValue="{{ kvSecret['secrets'][0]['secret'] }}
+#
+#
+#- name: Output key vault secret
+#  debug:
+#    msg="{{ secretValue }}"
 
 
 

@@ -1,4 +1,0 @@
----
-resource_group: 'Vault-rg'
-name: 'staslevman-vault'
-secret_name: 'VM-password'

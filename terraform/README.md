@@ -13,7 +13,7 @@ If you received a custom .tfvars file from me, the variable should already be se
 
 
 There are two template resources, one creates the API call script to update OKTA uri's, the other template creates the .env file creation script.
-Both of these scripts are used later on in the configure
+Both of these scripts are used later by ansible to cofigure the machines.
 
 The project uses a linux virtual machine scale set for elasticity and a managed postgrSQL database flexible server.
 

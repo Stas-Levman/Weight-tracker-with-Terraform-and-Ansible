@@ -12,13 +12,11 @@ when using a .tfvars the variable `is-azure-vault-enabled` should be set to fals
 If you received a custom .tfvars file from me, the variable should already be set to false by default and ready to be used to build the infrastructure.
 
 
-The template uses `custom_data` to provide the virtual machines all the necessary configuration (packages installation, env file creation, and update OKTA URIs via API),
-The script can be found <a href="https://github.com/sincros121/Weight-tracker-terraform/blob/terraform/root_module/VM-startup-script-template.sh" title="Here">Here</a>
-.
+There are two template resources, one creates the API call script to update OKTA uri's, the other template creates the .env file creation script.
+Both of these scripts are used later on in the configure
 
 The project uses a linux virtual machine scale set for elasticity and a managed postgrSQL database flexible server.
 
-Terraform state is being stored in azure storage container, to disable it delete the backend block in the providers.tf file.
 
 *Note regarding SSH*: <br>
 The created public security group for the web aplication VMSS grants the user access to the virtual machines by fethcing their current public IP and giving it SSH access in the first inbound rule in the network-security group, this behavior can be changed by adjusting the `source_address_prefix` parameter.
@@ -30,7 +28,7 @@ The created public security group for the web aplication VMSS grants the user ac
 3. Clone the repository to an empty folder
 4. Change directory to root-module in that folder
 5. Run command "terraform init" to initialize the project and download all the necessary providers
-6. At this point you can plan or build the project using the terraform build or apply commands with the flag -var-file="FILENAME.tfvars", it takes between 4-10 minutes for the infrastructure to be deployed and configured by the script.
+6. At this point you can plan or build the project using the terraform build or apply commands with the flag -var-file="FILENAME.tfvars", it takes between 4-10 minutes for the infrastructure to be deployed.
 
 
 

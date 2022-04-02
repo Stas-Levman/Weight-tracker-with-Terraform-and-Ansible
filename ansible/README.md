@@ -1,7 +1,7 @@
 # Weight tracker Ansible
 
 ### Inventory creation
-Since we are creating an ever-changing scale set with azure, and there is no direct SSH accees to the machines IP, i decided to go 
+Since we are creating an ever-changing scale set with azure, and there is no direct SSH access to the machines IP, i decided to go 
 with a dynamic inventory strategy and password validation (No SSH keys). <br><br>
 The role <a href="https://github.com/sincros121/Weight-tracker-with-Terraform-and-Ansible/tree/main/ansible/roles/get-vmss-inventory" title="">get-vmss-inventory</a>
 builds our dynamic inventory using the azure.azcollection collection, it can be installed using ansible-galaxy, each time the role is called it fetches the current IPs and inbound NAT ports to build the hosts to configure.

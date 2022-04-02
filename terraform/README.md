@@ -32,40 +32,6 @@ The created public security group for the web aplication VMSS grants the user ac
 
 
 
-### Resources used in the template
-- `azure-vault`
-- `azurerm_resource_group`
-- `azurerm_virtual_network`
-- `azurerm_public_ip`
-- `azurerm_network_security_group`
-- `azurerm_subnet`
-- `azurerm_subnet_network_security_group_association`
-- `azurerm_lb`
-- `azurerm_lb_backend_address_pool`
-- `azurerm_lb_outbound_rule`
-- `azurerm_lb_probe`
-- `azurerm_lb_rule`
-- `azurerm_lb_nat_pool`
-- `azurerm_private_dns_zone`
-- `azurerm_private_dns_zone_virtual_network_link`
-- `azurerm_postgresql_flexible_server`
-- `azurerm_postgresql_flexible_server_configuration`
-- `azurerm_linux_virtual_machine_scale_set`
-- `azurerm_monitor_autoscale_setting` 
- 
-
-- `azurerm_network_interface` - not used in the project
-- `azurerm_linux_virtual_machine` - not used in the project 
-
- 
-
-
-### Special provider resources used in the template
-- `http`
-- `template_file`
-
-
-
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 

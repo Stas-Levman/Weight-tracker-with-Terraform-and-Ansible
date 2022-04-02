@@ -19,5 +19,7 @@ The terraform part of the project requires a custom .tfvars file with appropriat
 
 #### Ansible
 8. Change directory to the "Ansible" folder
-9. Run the command `ansible-playbook stage.yml --ask-vault-password` to configure the stage infrastructure.
-10. Run the command `ansible-playbook prod.yml --ask-vault-password` to configure the prod infrastructure.
+9. Run the command `export ANSIBLE_HOST_KEY_CHECKING=False` in order to set SSH key checking off so we'll be able to use passwords instead (Or change global setting in the ansible config file).
+10. Install SSHpass with command `sudo apt install sshpass -y`.
+11. Run the command `ansible-playbook stage.yml --ask-vault-password` to configure the stage infrastructure.
+12. Run the command `ansible-playbook prod.yml --ask-vault-password` to configure the prod infrastructure.
